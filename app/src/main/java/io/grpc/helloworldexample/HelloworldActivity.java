@@ -35,9 +35,11 @@ import android.widget.TextView;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.ref.WeakReference;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import grpc.crud.CrudServiceGrpc;
+import grpc.crud.TaskArrayResponse;
 import grpc.crud.TaskRequest;
 import grpc.crud.TaskResponse;
 import io.grpc.ManagedChannel;
@@ -53,6 +55,7 @@ public class HelloworldActivity extends AppCompatActivity {
   private String[] crudObjects = {
           "addElement",
           "getElementByID",
+          "listingElements",
           "updateElementByID",
           "removeElement"
   };
@@ -83,6 +86,8 @@ public class HelloworldActivity extends AppCompatActivity {
           request = "addElement";
         } else if (selectedCrudObject.equals("getElementByID")) {
           request = "getElementByID";
+        } else if (selectedCrudObject.equals("listingElements")) {
+          request = "listingElements";
         } else if (selectedCrudObject.equals("updateElementByID")) {
           request = "updateElementByID";
         } else if (selectedCrudObject.equals("removeElement")) {
@@ -158,6 +163,14 @@ public class HelloworldActivity extends AppCompatActivity {
             break;
           }
 
+          case "listingElements": { // ""
+            TaskArrayResponse arrayResponse = stub.listingElements(requestBuilder.build());
+            List<TaskResponse> elementList = arrayResponse.getArrayList();
+
+            String t = elementList.toString();
+            return elementList.toString();
+          }
+
           case "updateElementByID": { // "id new_name"
             buildNameAndID(message, requestBuilder);
 
@@ -177,7 +190,7 @@ public class HelloworldActivity extends AppCompatActivity {
 
           default:
             // Handle unknown request
-            break;
+            return "Unknown request.";
         }
 
         return result.toString();
