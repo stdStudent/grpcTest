@@ -118,6 +118,13 @@ public class HelloworldActivity extends AppCompatActivity {
       this.activityReference = new WeakReference<Activity>(activity);
     }
 
+    private static void buildNameAndID(String message, TaskRequest.Builder requestBuilder) {
+      String[] parts = message.split("\\s+", 2);
+      int id = Integer.parseInt(parts[0]);
+      String name = parts[1];
+      requestBuilder.setId(id).setName(name);
+    }
+
     @Override
     protected String doInBackground(String... params) {
       String host = params[0];
@@ -130,23 +137,44 @@ public class HelloworldActivity extends AppCompatActivity {
         channel = ManagedChannelBuilder.forAddress(host, port).usePlaintext().build();
         CrudServiceGrpc.CrudServiceBlockingStub stub = CrudServiceGrpc.newBlockingStub(channel);
 
-        TaskRequest.Builder requestBuilder = TaskRequest.newBuilder().setId(Integer.parseInt(message));
+        TaskRequest.Builder requestBuilder = TaskRequest.newBuilder();
         TaskResponse result = null;
 
         // Set the selected CRUD object based on the request
         switch (request) {
-          case "addElement":
+          case "addElement": {// "any_id name"
+            buildNameAndID(message, requestBuilder);
             result = stub.addElement(requestBuilder.build());
             break;
-          case "getElementByID":
-            result = stub.getElementByID(requestBuilder.build());
+          }
+
+          case "getElementByID": { // "id"
+            requestBuilder.setId(Integer.parseInt(message.trim()));
+            try {
+              result = stub.getElementByID(requestBuilder.build());
+            } catch (Exception e) {
+              return "Failed: there's no element with such id.";
+            }
             break;
-          case "updateElementByID":
+          }
+
+          case "updateElementByID": { // "id new_name"
+            buildNameAndID(message, requestBuilder);
+
             result = stub.updateElementByID(requestBuilder.build());
             break;
-          case "removeElement":
-            result = stub.removeElement(requestBuilder.build());
+          }
+
+          case "removeElement": { // "id"
+            requestBuilder.setId(Integer.parseInt(message));
+            try {
+              result = stub.removeElement(requestBuilder.build());
+            } catch (Exception e) {
+              return "Failed: there's no element with such id.";
+            }
             break;
+          }
+
           default:
             // Handle unknown request
             break;

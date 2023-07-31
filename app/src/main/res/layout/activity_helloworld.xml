@@ -13,14 +13,16 @@
                 android:layout_weight="2"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:hint="Enter Host" />
+                android:hint="Enter Host"
+                android:text="@string/ip_address" />
         <EditText
                 android:id="@+id/port_edit_text"
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:inputType="numberDecimal"
-                android:hint="Enter Port" />
+                android:hint="Enter Port"
+                android:text="@string/port_number" />
     </LinearLayout>
 
     <Spinner
