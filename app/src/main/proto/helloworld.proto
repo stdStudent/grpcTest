@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+option go_package = "app/crud";
+option java_multiple_files = true;
+option java_package = "grpc.crud";
+option java_outer_classname = "CrudProto";
+
+package crud;
+
+service CrudService {
+  rpc addElement (TaskRequest) returns (TaskResponse) {}
+
+  rpc getElementByID (TaskRequest) returns (TaskResponse) {}
+  rpc listingElements (TaskRequest) returns (TaskArrayResponse) {}
+
+  rpc updateElementByID (TaskRequest) returns (TaskResponse) {}
+
+  rpc removeElement (TaskRequest) returns (TaskResponse) {}
+}
+
+
+message TaskRequest {
+  int32 id = 1;
+  string name = 2;
+}
+
+message TaskResponse {
+  int32 id = 1;
+  string name = 2;
+}
+
+message TaskArrayResponse {
+  repeated TaskResponse array = 1;
+}

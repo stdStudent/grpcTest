@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="crud_options">
+        <item>Add Element</item>
+        <item>Get Element By ID</item>
+<!--        <item>Listing Elements</item>-->
+        <item>Update Element By ID</item>
+        <item>Remove Element</item>
+    </string-array>
+</resources>
