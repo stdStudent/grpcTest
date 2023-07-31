@@ -155,11 +155,7 @@ public class HelloworldActivity extends AppCompatActivity {
 
           case "getElementByID": { // "id"
             requestBuilder.setId(Integer.parseInt(message.trim()));
-            try {
-              result = stub.getElementByID(requestBuilder.build());
-            } catch (Exception e) {
-              return "Failed: there's no element with such id.";
-            }
+            result = stub.getElementByID(requestBuilder.build());
             break;
           }
 
@@ -173,18 +169,13 @@ public class HelloworldActivity extends AppCompatActivity {
 
           case "updateElementByID": { // "id new_name"
             buildNameAndID(message, requestBuilder);
-
             result = stub.updateElementByID(requestBuilder.build());
             break;
           }
 
           case "removeElement": { // "id"
             requestBuilder.setId(Integer.parseInt(message));
-            try {
-              result = stub.removeElement(requestBuilder.build());
-            } catch (Exception e) {
-              return "Failed: there's no element with such id.";
-            }
+            result = stub.removeElement(requestBuilder.build());
             break;
           }
 
@@ -195,12 +186,24 @@ public class HelloworldActivity extends AppCompatActivity {
 
         return result.toString();
       } catch (Exception e) {
+        String knownErrMsg = getErrMsg(e);
+        if (knownErrMsg != null) return knownErrMsg;
+
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
         e.printStackTrace(pw);
         pw.flush();
         return String.format("Failed... : %n%s", sw);
       }
+    }
+
+    private static String getErrMsg(Exception e) {
+      String err = e.toString();
+      if (err.equals(GrpcErrorMessages.MARSHALING_NIL))
+        return "Failed: there's no element with such id.";
+      else if (err.equals(GrpcErrorMessages.UNAVAILABLE))
+        return "Failed: no connection established.";
+      return null;
     }
 
     @Override
