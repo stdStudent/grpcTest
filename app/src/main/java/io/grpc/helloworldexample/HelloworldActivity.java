@@ -195,7 +195,7 @@ public class HelloworldActivity extends AppCompatActivity {
             if (!MessageChecker.isFormat(message, MessageChecker.format_id))
               return MessageChecker.getRelativeFailedMsg(MessageChecker.format_id);
 
-            requestBuilder.setId(Integer.parseInt(message));
+            requestBuilder.setId(Integer.parseInt(message.trim()));
             result = stub.removeElement(requestBuilder.build());
             break;
           }
