@@ -52,7 +52,7 @@ public class HelloworldActivity extends AppCompatActivity {
   private EditText messageEdit;
   private TextView resultText;
 
-  private String[] crudObjects = {
+  private final String[] crudObjects = {
           "addElement",
           "getElementByID",
           "listingElements",
@@ -82,16 +82,26 @@ public class HelloworldActivity extends AppCompatActivity {
     crudSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
       public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         String selectedCrudObject = parent.getItemAtPosition(position).toString();
-        if (selectedCrudObject.equals("addElement")) {
-          request = "addElement";
-        } else if (selectedCrudObject.equals("getElementByID")) {
-          request = "getElementByID";
-        } else if (selectedCrudObject.equals("listingElements")) {
-          request = "listingElements";
-        } else if (selectedCrudObject.equals("updateElementByID")) {
-          request = "updateElementByID";
-        } else if (selectedCrudObject.equals("removeElement")) {
-          request = "removeElement";
+        switch (selectedCrudObject) {
+          case "addElement":
+            request = "addElement";
+            break;
+
+          case "getElementByID":
+            request = "getElementByID";
+            break;
+
+          case "listingElements":
+            request = "listingElements";
+            break;
+
+          case "updateElementByID":
+            request = "updateElementByID";
+            break;
+
+          case "removeElement":
+            request = "removeElement";
+            break;
         }
       }
 
@@ -124,6 +134,7 @@ public class HelloworldActivity extends AppCompatActivity {
     }
 
     private static void buildNameAndID(String message, TaskRequest.Builder requestBuilder) {
+      message = message.trim();
       String[] parts = message.split("\\s+", 2);
       int id = Integer.parseInt(parts[0]);
       String name = parts[1];
@@ -143,17 +154,23 @@ public class HelloworldActivity extends AppCompatActivity {
         CrudServiceGrpc.CrudServiceBlockingStub stub = CrudServiceGrpc.newBlockingStub(channel);
 
         TaskRequest.Builder requestBuilder = TaskRequest.newBuilder();
-        TaskResponse result = null;
+        TaskResponse result;
 
         // Set the selected CRUD object based on the request
         switch (request) {
           case "addElement": {// "any_id name"
+            if (!MessageChecker.isFormat(message, MessageChecker.format_id_name))
+              return "Failed: Message must be in format \"id name\".";
+
             buildNameAndID(message, requestBuilder);
             result = stub.addElement(requestBuilder.build());
             break;
           }
 
           case "getElementByID": { // "id"
+            if (!MessageChecker.isFormat(message, MessageChecker.format_id))
+              return "Failed: Message must be in format \"id\".";
+
             requestBuilder.setId(Integer.parseInt(message.trim()));
             result = stub.getElementByID(requestBuilder.build());
             break;
@@ -162,18 +179,22 @@ public class HelloworldActivity extends AppCompatActivity {
           case "listingElements": { // ""
             TaskArrayResponse arrayResponse = stub.listingElements(requestBuilder.build());
             List<TaskResponse> elementList = arrayResponse.getArrayList();
-
-            String t = elementList.toString();
             return elementList.toString();
           }
 
           case "updateElementByID": { // "id new_name"
+            if (!MessageChecker.isFormat(message, MessageChecker.format_id_name))
+              return "Failed: Message must be in format \"id name\".";
+
             buildNameAndID(message, requestBuilder);
             result = stub.updateElementByID(requestBuilder.build());
             break;
           }
 
           case "removeElement": { // "id"
+            if (!MessageChecker.isFormat(message, MessageChecker.format_id))
+              return "Failed: Message must be in format \"id\".";
+
             requestBuilder.setId(Integer.parseInt(message));
             result = stub.removeElement(requestBuilder.build());
             break;
