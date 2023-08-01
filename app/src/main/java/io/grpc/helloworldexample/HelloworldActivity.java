@@ -160,7 +160,7 @@ public class HelloworldActivity extends AppCompatActivity {
         switch (request) {
           case "addElement": {// "any_id name"
             if (!MessageChecker.isFormat(message, MessageChecker.format_id_name))
-              return "Failed: Message must be in format \"id name\".";
+              return MessageChecker.getRelativeFailedMsg(MessageChecker.format_id_name);
 
             buildNameAndID(message, requestBuilder);
             result = stub.addElement(requestBuilder.build());
@@ -169,7 +169,7 @@ public class HelloworldActivity extends AppCompatActivity {
 
           case "getElementByID": { // "id"
             if (!MessageChecker.isFormat(message, MessageChecker.format_id))
-              return "Failed: Message must be in format \"id\".";
+              return MessageChecker.getRelativeFailedMsg(MessageChecker.format_id);
 
             requestBuilder.setId(Integer.parseInt(message.trim()));
             result = stub.getElementByID(requestBuilder.build());
@@ -184,7 +184,7 @@ public class HelloworldActivity extends AppCompatActivity {
 
           case "updateElementByID": { // "id new_name"
             if (!MessageChecker.isFormat(message, MessageChecker.format_id_name))
-              return "Failed: Message must be in format \"id name\".";
+              return MessageChecker.getRelativeFailedMsg(MessageChecker.format_id_name);
 
             buildNameAndID(message, requestBuilder);
             result = stub.updateElementByID(requestBuilder.build());
@@ -193,7 +193,7 @@ public class HelloworldActivity extends AppCompatActivity {
 
           case "removeElement": { // "id"
             if (!MessageChecker.isFormat(message, MessageChecker.format_id))
-              return "Failed: Message must be in format \"id\".";
+              return MessageChecker.getRelativeFailedMsg(MessageChecker.format_id);
 
             requestBuilder.setId(Integer.parseInt(message));
             result = stub.removeElement(requestBuilder.build());
@@ -214,16 +214,16 @@ public class HelloworldActivity extends AppCompatActivity {
         PrintWriter pw = new PrintWriter(sw);
         e.printStackTrace(pw);
         pw.flush();
-        return String.format("Failed... : %n%s", sw);
+        return String.format("Failed: %n%s", sw);
       }
     }
 
     private static String getErrMsg(Exception e) {
       String err = e.toString();
       if (err.equals(GrpcErrorMessages.MARSHALING_NIL))
-        return "Failed: there's no element with such id.";
+        return GrpcErrorMessages.getRelativeFailedMsg(GrpcErrorMessages.MARSHALING_NIL);
       else if (err.equals(GrpcErrorMessages.UNAVAILABLE))
-        return "Failed: no connection established.";
+        return GrpcErrorMessages.getRelativeFailedMsg(GrpcErrorMessages.UNAVAILABLE);
       return null;
     }
 
