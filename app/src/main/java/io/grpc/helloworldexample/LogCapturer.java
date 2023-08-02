@@ -5,10 +5,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 
 public class LogCapturer {
     private Thread captureThread;
-    private ByteArrayOutputStream logcatOutput;
+    private OutputStream logcatOutput;
 
     public void startCapture() {
         captureThread = new Thread(new Runnable() {
@@ -33,7 +34,7 @@ public class LogCapturer {
         captureThread.start();
     }
 
-    public ByteArrayOutputStream getLogcatOutput() {
+    public OutputStream getLogcatOutput() {
         return logcatOutput;
     }
 
