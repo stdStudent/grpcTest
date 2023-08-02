@@ -52,6 +52,8 @@ public class HelloworldActivity extends AppCompatActivity {
   private EditText messageEdit;
   private TextView resultText;
 
+  private LogCapturer logCapturer;
+
   private final String[] crudObjects = {
           "addElement",
           "getElementByID",
@@ -66,6 +68,10 @@ public class HelloworldActivity extends AppCompatActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+
+    logCapturer = new LogCapturer();
+    logCapturer.startCapture();
+
     setContentView(R.layout.activity_helloworld);
     sendButton = (Button) findViewById(R.id.send_button);
     hostEdit = (EditText) findViewById(R.id.host_edit_text);
@@ -109,6 +115,12 @@ public class HelloworldActivity extends AppCompatActivity {
         // Do nothing
       }
     });
+  }
+
+  @Override
+  protected void onDestroy() {
+    super.onDestroy();
+    logCapturer.stopCapture();
   }
 
   public void sendMessage(View view) {
